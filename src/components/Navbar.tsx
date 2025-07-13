@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo} from "react";
 import { Table } from "./Table";
 import { Toolbar } from "./Toolbar";
 
