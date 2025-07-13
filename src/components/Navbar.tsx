@@ -563,7 +563,7 @@ export const Navbar = () => {
                         </button>
                     ))}
                     <div
-                        className="text-2xl cursor-pointer"
+                        className="text-3xl cursor-pointer text-gray-700"
                         onClick={handleAddSheet}
                     >
                         +
