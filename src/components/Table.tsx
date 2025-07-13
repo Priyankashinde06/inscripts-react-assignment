@@ -34,7 +34,18 @@ export const Table = ({ data, viewMode }: TableProps) => {
         return <span className="px-2 py-[2px] rounded-full text-xs font-medium bg-gray-100 text-gray-800">{status}</span>;
     }
   };
-
+  const renderPriorityBadge = (priority: string) => {
+    switch (priority) {
+      case 'High':
+        return <span className="px-2 py-[2px] rounded-full text-[13px] font-bold text-[#ef4d44]">High</span>;
+      case 'Medium':
+        return <span className="px-2 py-[2px] rounded-full text-[13px] font-bold  text-[#c29210]">Medium</span>;
+      case 'Low':
+        return <span className="px-2 py-[2px] rounded-full text-[13px] font-bold  text-[#1a8cff]">Low</span>;
+      default:
+        return <span className="px-2 py-[2px] rounded-full text-[13px] font-bold  text-gray-800">{priority}</span>;
+    }
+  };
   const columns: Column<TableData>[] = useMemo(() => [
     {
       Header: '#',
@@ -80,7 +91,8 @@ export const Table = ({ data, viewMode }: TableProps) => {
     {
       Header: 'Priority',
       accessor: 'priority',
-      width: 150
+      width: 150,
+      Cell: ({ value }: { value: string }) => renderPriorityBadge(value)
     },
     {
       Header: 'Due Date',
@@ -110,7 +122,7 @@ export const Table = ({ data, viewMode }: TableProps) => {
 
   return (
     <div className="flex-1 overflow-hidden">
-      <div className="overflow-auto h-full" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+      <div className="overflow-auto h-full scrollbar-hide" style={{ maxHeight: 'calc(100vh - 200px)' }}>
         {viewMode === 'table' ? (
           <table {...getTableProps()} className="w-full border-collapse">
             <thead>
@@ -133,7 +145,7 @@ export const Table = ({ data, viewMode }: TableProps) => {
                       </div>
                     </th>
                   ))}
-                  <th className="px-2 py-1 text-sm font-semibold text-gray-700 border border-[#eeeeee] truncate" style={{ width: 144, minWidth: 50, backgroundColor: 'rgb(243, 243, 243)' }}></th>
+                  <th className="px-2 py-1 text-sm font-semibold text-gray-700 border-x-2 border-gray-300 border-dashed truncate" style={{ width: 167, minWidth: 50, backgroundColor: 'rgb(243, 243, 243)' }}></th>
                 </tr>
               ))}
             </thead>
@@ -153,7 +165,7 @@ export const Table = ({ data, viewMode }: TableProps) => {
                         </td>
                       );
                     })}
-                    <td className="px-2 py-1 text-sm text-gray-700 border border-[#eeeeee] w-[117px]"></td>
+                    <td className="px-2 py-1 text-sm text-gray-700 border  w-[117px] border-x-2 border-gray-300 border-dashed"></td>
                   </tr>
                 );
               })}
@@ -171,7 +183,7 @@ export const Table = ({ data, viewMode }: TableProps) => {
                     <td className="px-2 py-1 text-sm text-gray-700 border border-[#eeeeee] text-center" contentEditable></td>
                     <td className="px-2 py-1 text-sm text-gray-700 border border-[#eeeeee] text-end" contentEditable></td>
                     <td className="px-2 py-1 text-sm text-gray-700 border border-[#eeeeee] text-end" contentEditable></td>
-                    <td className="px-2 py-1 text-sm text-gray-700 border border-[#eeeeee]" contentEditable></td>
+                    <td className="px-2 py-1 text-sm text-gray-700 border border-x-2 border-gray-300 border-dashed" contentEditable></td>
                   </tr>
                 ))
               }

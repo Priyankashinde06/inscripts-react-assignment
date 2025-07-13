@@ -3,16 +3,16 @@ import { Table } from "./Table";
 import { Toolbar } from "./Toolbar";
 
 interface TableData {
-  id: number;
-  jobRequest: string;
-  submitted: string;
-  status: string;
-  submitter: string;
-  url: string;
-  assigned: string;
-  priority: string;
-  dueDate: string;
-  estValue: string;
+    id: number;
+    jobRequest: string;
+    submitted: string;
+    status: string;
+    submitter: string;
+    url: string;
+    assigned: string;
+    priority: string;
+    dueDate: string;
+    estValue: string;
 }
 
 export const Navbar = () => {
@@ -123,12 +123,9 @@ export const Navbar = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const submittedDate = new Date().toLocaleDateString('en-GB');
-
         const newEntry = {
             id: tableData.length + 1,
-            ...newRow,
-            submitted: submittedDate
+            ...newRow
         } as TableData;
 
         setTableData([...tableData, newEntry]);
@@ -203,7 +200,7 @@ export const Navbar = () => {
                 } else {
                     alert('No valid data found in the file.');
                 }
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 alert('Error importing file. Please check the file format and try again.');
             }
@@ -257,30 +254,61 @@ export const Navbar = () => {
             {showForm && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-4 md:p-6 rounded-lg w-full max-w-md mx-4">
-                        <h2 className="text-lg md:text-xl font-semibold mb-2">Add New Action</h2>
+                        <h2 className="text-lg md:text-xl font-semibold mb-4">Add New Action</h2>
                         <form onSubmit={handleSubmit}>
-                            <div className="grid grid-cols-2 gap-3 mb-3">
-                                <div className="mb-1">
+                            <div className="grid grid-cols-2 gap-3 mb-4">
+                                {/* Job Request */}
+                                <div className="col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Job Request</label>
                                     <input
                                         type="text"
                                         name="jobRequest"
                                         value={newRow.jobRequest}
                                         onChange={handleInputChange}
-                                        className="w-full p-2 border border-gray-300 rounded text-sm md:text-base"
+                                        className="w-full p-2 border border-gray-300 rounded text-sm"
                                         required
                                     />
                                 </div>
 
-                                <div className="mb-2">
+                                {/* Submitted - Fixed to show entered date */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Submitted</label>
+                                    <input
+                                        type="date"
+                                        name="submitted"
+                                        value={newRow.submitted.includes('-')
+                                            ? newRow.submitted.split('-').reverse().join('-')
+                                            : newRow.submitted}
+                                        onChange={(e) => {
+                                            const dateValue = e.target.value;
+                                            if (dateValue) {
+                                                const [year, month, day] = dateValue.split('-');
+                                                const formattedDate = `${day}-${month}-${year}`;
+                                                setNewRow(prev => ({
+                                                    ...prev,
+                                                    submitted: formattedDate
+                                                }));
+                                            } else {
+                                                setNewRow(prev => ({
+                                                    ...prev,
+                                                    submitted: ''
+                                                }));
+                                            }
+                                        }}
+                                        className="w-full p-2 border border-gray-300 rounded text-sm"
+                                    />
+                                </div>
+
+                                {/* Status */}
+                                <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                                     <select
                                         name="status"
                                         value={newRow.status}
                                         onChange={handleInputChange}
-                                        className="w-full p-2 border border-gray-300 rounded text-sm md:text-base"
+                                        className="w-full p-2 border border-gray-300 rounded text-sm"
                                     >
-                                        <option value="Select Status">Select Status</option>
+                                        <option value="Select Status">Select</option>
                                         <option value="Need to start">Need to start</option>
                                         <option value="In-process">In-process</option>
                                         <option value="Complete">Complete</option>
@@ -288,77 +316,105 @@ export const Navbar = () => {
                                     </select>
                                 </div>
 
-                                <div className="mb-2">
+                                {/* Submitter */}
+                                <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Submitter</label>
                                     <input
                                         type="text"
                                         name="submitter"
                                         value={newRow.submitter}
                                         onChange={handleInputChange}
-                                        className="w-full p-2 border border-gray-300 rounded text-sm md:text-base"
+                                        className="w-full p-2 border border-gray-300 rounded text-sm"
                                         required
                                     />
                                 </div>
 
-                                <div className="mb-2">
+                                {/* URL */}
+                                <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">URL</label>
                                     <input
                                         type="text"
                                         name="url"
                                         value={newRow.url}
                                         onChange={handleInputChange}
-                                        className="w-full p-2 border border-gray-300 rounded text-sm md:text-base"
+                                        className="w-full p-2 border border-gray-300 rounded text-sm"
                                     />
                                 </div>
 
-                                <div className="mb-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
+                                {/* Assigned */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Assigned</label>
                                     <input
                                         type="text"
                                         name="assigned"
                                         value={newRow.assigned}
                                         onChange={handleInputChange}
-                                        className="w-full p-2 border border-gray-300 rounded text-sm md:text-base"
+                                        className="w-full p-2 border border-gray-300 rounded text-sm"
                                     />
                                 </div>
 
-                                <div className="mb-2">
+                                {/* Priority */}
+                                <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
                                     <select
                                         name="priority"
                                         value={newRow.priority}
                                         onChange={handleInputChange}
-                                        className="w-full p-2 border border-gray-300 rounded text-sm md:text-base"
+                                        className="w-full p-2 border border-gray-300 rounded text-sm"
                                     >
-                                        <option value="Select Priority">Select Priority</option>
+                                        <option value="Select Priority">Select</option>
                                         <option value="Low">Low</option>
                                         <option value="Medium">Medium</option>
                                         <option value="High">High</option>
                                     </select>
                                 </div>
 
-                                <div className="col-span-2">
-                                    <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-                                        <input
-                                            type="date"
-                                            name="dueDate"
-                                            value={newRow.dueDate}
-                                            onChange={handleInputChange}
-                                            className="w-full p-2 border border-gray-300 rounded text-sm md:text-base"
-                                        />
-                                    </div>
+                                {/* Due Date */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                                    <input
+                                        type="date"
+                                        name="dueDate"
+                                        value={newRow.dueDate.includes('-')
+                                            ? newRow.dueDate.split('-').reverse().join('-')
+                                            : newRow.dueDate}
+                                        onChange={(e) => {
+                                            const dateValue = e.target.value;
+                                            if (dateValue) {
+                                                const [year, month, day] = dateValue.split('-');
+                                                const formattedDate = `${day}-${month}-${year}`;
+                                                setNewRow(prev => ({
+                                                    ...prev,
+                                                    dueDate: formattedDate
+                                                }));
+                                            } else {
+                                                setNewRow(prev => ({
+                                                    ...prev,
+                                                    dueDate: ''
+                                                }));
+                                            }
+                                        }}
+                                        className="w-full p-2 border border-gray-300 rounded text-sm"
+                                    />
                                 </div>
 
-                                <div className="col-span-2">
-                                    <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Estimated Value</label>
+                                {/* Est Value */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Est Value</label>
+                                    <div className="relative">
+                                        <span className="absolute left-2 top-2">₹</span>
                                         <input
                                             type="text"
                                             name="estValue"
-                                            value={newRow.estValue}
-                                            onChange={handleInputChange}
-                                            className="w-full p-2 border border-gray-300 rounded text-sm md:text-base"
+                                            value={newRow.estValue.replace('₹', '').trim()}
+                                            onChange={(e) => {
+                                                const value = e.target.value.replace(/[^0-9,]/g, '');
+                                                setNewRow(prev => ({
+                                                    ...prev,
+                                                    estValue: value ? `${value} ₹` : ''
+                                                }));
+                                            }}
+                                            className="w-full p-2 pl-6 border border-gray-300 rounded text-sm"
                                         />
                                     </div>
                                 </div>
@@ -384,7 +440,7 @@ export const Navbar = () => {
                 </div>
             )}
 
-            <Toolbar 
+            <Toolbar
                 onViewModeToggle={toggleViewMode}
                 onImport={handleImport}
                 onExport={handleExport}
@@ -416,7 +472,7 @@ export const Navbar = () => {
                     <span className="text-[#afafaf] text-lg tracking-wider ml-2" style={{ lineHeight: 1 }}>...</span>
                 </div>
 
-                <div className="w-1/2 md:w-[287px] flex px-2 py-1 text-sm text-gray-600 truncate items-center justify-center gap-1 bg-[#DCCFFC] border border-[#eeeeee] cursor-pointer">
+                <div className="w-1/2 md:w-[294px] flex px-2 py-1 text-sm text-gray-600 truncate items-center justify-center gap-1 bg-[#DCCFFC] border border-[#eeeeee] cursor-pointer">
                     <img className="w-5" alt="Answer" src="data:image/svg+xml,%3csvg%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M10.0001%202.5C10.3452%202.5%2010.6251%202.77982%2010.6251%203.125V7.91667H12.7046C13.9702%207.91667%2014.9963%208.94268%2014.9963%2010.2083V15.368L16.4334%2013.9328C16.6777%2013.6888%2017.0734%2013.6891%2017.3173%2013.9334C17.5612%2014.1776%2017.5609%2014.5733%2017.3167%2014.8172L14.8129%2017.3177C14.5688%2017.5615%2014.1733%2017.5613%2013.9293%2017.3174L11.4289%2014.8169C11.1848%2014.5729%2011.1848%2014.1771%2011.4289%2013.9331C11.673%2013.689%2012.0687%2013.689%2012.3128%2013.9331L13.7463%2015.3665V10.2083C13.7463%209.63304%2013.2799%209.16667%2012.7046%209.16667H7.29165C6.71635%209.16667%206.24998%209.63304%206.24998%2010.2083V15.3665L7.68346%2013.9331C7.92754%2013.689%208.32327%2013.689%208.56734%2013.9331C8.81142%2014.1771%208.81142%2014.5729%208.56734%2014.8169L6.06692%2017.3174C5.82285%2017.5614%205.42712%2017.5614%205.18304%2017.3174L2.68257%2014.8169C2.43849%2014.5729%202.43849%2014.1771%202.68257%2013.9331C2.92664%2013.689%203.32237%2013.689%203.56645%2013.9331L4.99998%2015.3666V10.2083C4.99998%208.94268%206.026%207.91667%207.29165%207.91667H9.37506V3.125C9.37506%202.77982%209.65488%202.5%2010.0001%202.5Z'%20fill='white'/%3e%3c/svg%3e" />
                     <span className="font-[500] tracking-wide">Answer a question</span>
                     <span className="text-[#afafaf] text-lg tracking-wider ml-2" style={{ lineHeight: 1 }}>...</span>
@@ -427,7 +483,7 @@ export const Navbar = () => {
                     <span className="text-[#afafaf] text-lg tracking-wider ml-2" style={{ lineHeight: 1 }}>...</span>
                 </div>
 
-                <div className="w-1/2 md:w-[150px] flex px-2 py-1 text-sm text-gray-700 truncate border border-[#eeeeee] bg-[#eeeeee] items-center justify-center cursor-pointer">
+                <div className="w-1/2 md:w-[150px] flex px-2 py-1 text-sm text-gray-700 truncate border-l border-x-2 border-gray-300 border-dashed bg-[#eeeeee] items-center justify-center cursor-pointer">
                     <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="text-3xl" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                         <path d="M11.75 4.5a.75.75 0 0 1 .75.75V11h5.75a.75.75 0 0 1 0 1.5H12.5v5.75a.75.75 0 0 1-1.5 0V12.5H5.25a.75.75 0 0 1 0-1.5H11V5.25a.75.75 0 0 1 .75-.75Z"> </path>
                     </svg>
@@ -436,15 +492,15 @@ export const Navbar = () => {
 
             <Table data={filteredData} viewMode={viewMode} />
 
-            <div className="sticky bottom-0 bg-white border-t border-[#eeeeee] py-2 px-4 flex justify-between items-center w-full">
+            <div className="sticky bottom-0 bg-white border-t border-[#eeeeee] px-4 flex justify-between items-center w-full">
                 <div className="flex space-x-2 md:space-x-4 overflow-x-auto">
                     {['All Orders', 'Pending', 'Reviewed', 'Arrived'].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-3 py-2 text-sm font-medium whitespace-nowrap rounded-md ${activeTab === tab
-                                ? 'text-[#4B6A4F] font-semibold border-b-2 border-[#4B6A4F]'
-                                : 'text-gray-700 hover:text-[#4B6A4F]'
+                            className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap  ${activeTab === tab
+                                ? 'text-[#3e5741] font-semibold border-t-2 bg-[#e8f0e9] border-[#4B6A4F]'
+                                : 'text-gray-700 hover:text-[#4B6A4F] '
                                 }`}
                         >
                             {tab}
