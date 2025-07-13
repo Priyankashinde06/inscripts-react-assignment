@@ -7,7 +7,7 @@ This project is a static front-end React prototype that replicates a spreadsheet
 ## 🚀 Live Demo
 
 🔗 [Live URL](https://spreadsheet-clone-priyanka.vercel.app/)  
-💻 [GitHub Repository](https://github.com/yourusername/inscripts-react-assignment)
+💻 [GitHub Repository](https://github.com/Priyankashinde06/inscripts-react-assignment)
 
 ---
 
