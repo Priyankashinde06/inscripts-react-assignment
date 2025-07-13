@@ -85,14 +85,8 @@ export const Navbar = () => {
         }
     ];
 
-    const [sheets, setSheets] = useState<Sheet[]>([
-        {
-            id: 1,
-            name: 'Sheet 1',
-            data: initialData
-        }
-    ]);
-    const [activeSheetId, setActiveSheetId] = useState(1);
+    const [sheets, setSheets] = useState<Sheet[]>([]); // Initialize as empty array
+    const [activeSheetId, setActiveSheetId] = useState<number | null>(null);
     const [tableData, setTableData] = useState<TableData[]>(initialData);
     const [activeTab, setActiveTab] = useState('All Orders');
     const [showForm, setShowForm] = useState(false);
@@ -108,13 +102,6 @@ export const Navbar = () => {
         estValue: ""
     });
     const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
-
-    useEffect(() => {
-        const activeSheet = sheets.find(sheet => sheet.id === activeSheetId);
-        if (activeSheet) {
-            setTableData(activeSheet.data);
-        }
-    }, [activeSheetId, sheets]);
 
     const filteredData = useMemo(() => {
         switch (activeTab) {
@@ -148,11 +135,13 @@ export const Navbar = () => {
         const newSheet = {
             id: newSheetId,
             name: `Sheet ${newSheetId}`,
-            data: [...initialData] // Copy the initial data instead of empty array
+            data: [...initialData] // Copy the initial data
         };
+
         setSheets([...sheets, newSheet]);
-        setActiveSheetId(newSheetId);
+        setActiveSheetId(newSheetId); // Activate the new sheet
     };
+
     const handleSwitchSheet = (sheetId: number) => {
         setActiveSheetId(sheetId);
     };
@@ -549,40 +538,48 @@ export const Navbar = () => {
             <Table data={filteredData} viewMode={viewMode} />
 
             <div className="sticky bottom-0 bg-white border-t border-[#eeeeee] px-4 flex justify-between items-center w-full">
-                <div className="flex space-x-2 md:space-x-4 overflow-x-auto">
+                <div className="flex space-x-2 md:space-x-4 overflow-x-auto items-center">
+                    {/* Filter tabs */}
                     {['All Orders', 'Pending', 'Reviewed', 'Arrived'].map((tab) => (
                         <button
                             key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap  ${activeTab === tab
-                                ? 'text-[#3e5741] font-semibold border-t-2 bg-[#e8f0e9] border-[#4B6A4F]'
-                                : 'text-gray-700 hover:text-[#4B6A4F] '
+                            onClick={() => {
+                                setActiveTab(tab);
+                                setActiveSheetId(null); // Clear sheet selection when clicking filter tabs
+                            }}
+                            className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap ${activeTab === tab && activeSheetId === null
+                                    ? 'text-[#3e5741] font-semibold border-t-2 border-[#4B6A4F]'
+                                    : 'text-gray-700 hover:text-[#4B6A4F]'
                                 }`}
                         >
                             {tab}
                         </button>
                     ))}
-                    <div
-                        className="text-3xl cursor-pointer text-gray-700"
-                        onClick={handleAddSheet}
-                    >
-                        +
-                    </div>
-                </div>
 
-                <div className="flex space-x-2 ml-4">
-                    {sheets.map(sheet => (
+                    {/* Sheet tabs */}
+                    {sheets.length > 0 && sheets.map(sheet => (
                         <button
                             key={sheet.id}
-                            onClick={() => handleSwitchSheet(sheet.id)}
-                            className={`px-3 py-1 text-sm rounded ${activeSheetId === sheet.id
-                                ? 'bg-[#4B6A4F] text-white'
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            onClick={() => {
+                                handleSwitchSheet(sheet.id);
+                                setActiveTab(''); // Clear filter tab selection when clicking sheet tabs
+                            }}
+                            className={`px-4 py-2.5 text-sm whitespace-nowrap ${activeSheetId === sheet.id
+                                    ? 'text-[#3e5741] font-semibold border-t-2 border-[#4B6A4F]'
+                                    : 'text-gray-700 hover:text-[#4B6A4F]'
                                 }`}
                         >
                             {sheet.name}
                         </button>
                     ))}
+
+                    {/* Add sheet button */}
+                    <button
+                        className="text-gray-700 hover:text-[#4B6A4F] px-2 text-xl"
+                        onClick={handleAddSheet}
+                    >
+                        +
+                    </button>
                 </div>
             </div>
         </div>
