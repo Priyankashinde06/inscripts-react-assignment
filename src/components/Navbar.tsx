@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Table } from "./Table";
 import { Toolbar } from "./Toolbar";
 
@@ -15,8 +15,14 @@ interface TableData {
     estValue: string;
 }
 
+interface Sheet {
+    id: number;
+    name: string;
+    data: TableData[];
+}
+
 export const Navbar = () => {
-    const [tableData, setTableData] = useState<TableData[]>([
+    const initialData: TableData[] = [
         {
             id: 1,
             jobRequest: "Launch social media campaign..",
@@ -77,8 +83,17 @@ export const Navbar = () => {
             dueDate: "30-01-2025",
             estValue: "2,800,000 ₹"
         }
-    ]);
+    ];
 
+    const [sheets, setSheets] = useState<Sheet[]>([
+        {
+            id: 1,
+            name: 'Sheet 1',
+            data: initialData
+        }
+    ]);
+    const [activeSheetId, setActiveSheetId] = useState(1);
+    const [tableData, setTableData] = useState<TableData[]>(initialData);
     const [activeTab, setActiveTab] = useState('All Orders');
     const [showForm, setShowForm] = useState(false);
     const [newRow, setNewRow] = useState({
@@ -93,6 +108,13 @@ export const Navbar = () => {
         estValue: ""
     });
     const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
+
+    useEffect(() => {
+        const activeSheet = sheets.find(sheet => sheet.id === activeSheetId);
+        if (activeSheet) {
+            setTableData(activeSheet.data);
+        }
+    }, [activeSheetId, sheets]);
 
     const filteredData = useMemo(() => {
         switch (activeTab) {
@@ -121,6 +143,20 @@ export const Navbar = () => {
         }));
     };
 
+    const handleAddSheet = () => {
+        const newSheetId = sheets.length > 0 ? Math.max(...sheets.map(sheet => sheet.id)) + 1 : 1;
+        const newSheet = {
+            id: newSheetId,
+            name: `Sheet ${newSheetId}`,
+            data: [...initialData] // Copy the initial data instead of empty array
+        };
+        setSheets([...sheets, newSheet]);
+        setActiveSheetId(newSheetId);
+    };
+    const handleSwitchSheet = (sheetId: number) => {
+        setActiveSheetId(sheetId);
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const newEntry = {
@@ -128,6 +164,17 @@ export const Navbar = () => {
             ...newRow
         } as TableData;
 
+        const updatedSheets = sheets.map(sheet => {
+            if (sheet.id === activeSheetId) {
+                return {
+                    ...sheet,
+                    data: [...sheet.data, newEntry]
+                };
+            }
+            return sheet;
+        });
+
+        setSheets(updatedSheets);
         setTableData([...tableData, newEntry]);
         setShowForm(false);
         setNewRow({
@@ -195,12 +242,21 @@ export const Navbar = () => {
                 }
 
                 if (newData.length > 0) {
+                    const updatedSheets = sheets.map(sheet => {
+                        if (sheet.id === activeSheetId) {
+                            return {
+                                ...sheet,
+                                data: [...sheet.data, ...newData]
+                            };
+                        }
+                        return sheet;
+                    });
+                    setSheets(updatedSheets);
                     setTableData([...tableData, ...newData]);
                     alert(`${newData.length} records imported successfully!`);
                 } else {
                     alert('No valid data found in the file.');
                 }
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 alert('Error importing file. Please check the file format and try again.');
             }
@@ -506,7 +562,27 @@ export const Navbar = () => {
                             {tab}
                         </button>
                     ))}
-                    <div className="text-2xl cursor-pointer">+</div>
+                    <div
+                        className="text-2xl cursor-pointer"
+                        onClick={handleAddSheet}
+                    >
+                        +
+                    </div>
+                </div>
+
+                <div className="flex space-x-2 ml-4">
+                    {sheets.map(sheet => (
+                        <button
+                            key={sheet.id}
+                            onClick={() => handleSwitchSheet(sheet.id)}
+                            className={`px-3 py-1 text-sm rounded ${activeSheetId === sheet.id
+                                ? 'bg-[#4B6A4F] text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                }`}
+                        >
+                            {sheet.name}
+                        </button>
+                    ))}
                 </div>
             </div>
         </div>
