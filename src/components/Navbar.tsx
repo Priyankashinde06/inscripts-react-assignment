@@ -216,6 +216,7 @@ export const Navbar = () => {
                     });
                 } else if (file.name.endsWith('.json')) {
                     const parsedData = JSON.parse(content);
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     newData = Array.isArray(parsedData) ? parsedData.map((item: any, index: number) => ({
                         id: tableData.length + index + 1,
                         jobRequest: item.jobRequest || item.job_request || item['Job Request'] || '',
@@ -246,6 +247,7 @@ export const Navbar = () => {
                 } else {
                     alert('No valid data found in the file.');
                 }
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
                 alert('Error importing file. Please check the file format and try again.');
             }

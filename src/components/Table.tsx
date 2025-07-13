@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo } from "react";
 import { useTable, useSortBy, type Column } from "react-table";
 
@@ -128,6 +129,7 @@ export const Table = ({ data, viewMode }: TableProps) => {
             <thead>
               {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()} className="sticky top-0 z-10 bg-white">
+                  
                   {headerGroup.headers.map((column: any) => (
                     <th
                       {...column.getHeaderProps(column.getSortByToggleProps())}
